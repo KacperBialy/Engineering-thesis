@@ -70,26 +70,26 @@
                         <Label Content="Baud rate"/>
                         <StackPanel Orientation="Horizontal">
                             <StackPanel>
-                                <RadioButton Content="600" GroupName="group" Checked="RadioButton_Checked"/>
-                                <RadioButton Content="1200" GroupName="group" Checked="RadioButton_Checked"/>
-                                <RadioButton Content="2400" GroupName="group" Checked="RadioButton_Checked"/>
-                                <RadioButton Content="4800" GroupName="group" Checked="RadioButton_Checked"/>
-                                <RadioButton Content="9600" GroupName="group" Checked="RadioButton_Checked"/>
+                                <RadioButton Content="600" GroupName="BaudRate" Checked="RadioButton_Checked"/>
+                                <RadioButton Content="1200" GroupName="BaudRate" Checked="RadioButton_Checked"/>
+                                <RadioButton Content="2400" GroupName="BaudRate" Checked="RadioButton_Checked"/>
+                                <RadioButton Content="4800" GroupName="BaudRate" Checked="RadioButton_Checked"/>
+                                <RadioButton Content="9600" GroupName="BaudRate" Checked="RadioButton_Checked"/>
                             </StackPanel>
 
                             <StackPanel>
-                                <RadioButton Content="14400" GroupName="group" Checked="RadioButton_Checked"/>
-                                <RadioButton Content="19200" GroupName="group" Checked="RadioButton_Checked"/>
-                                <RadioButton Content="28800" GroupName="group" Checked="RadioButton_Checked"/>
-                                <RadioButton Content="38400" GroupName="group" Checked="RadioButton_Checked"/>
-                                <RadioButton Content="56000" GroupName="group" Checked="RadioButton_Checked"/>
+                                <RadioButton Content="14400" GroupName="BaudRate" Checked="RadioButton_Checked"/>
+                                <RadioButton Content="19200" GroupName="BaudRate" Checked="RadioButton_Checked"/>
+                                <RadioButton Content="28800" GroupName="BaudRate" Checked="RadioButton_Checked"/>
+                                <RadioButton Content="38400" GroupName="BaudRate" Checked="RadioButton_Checked"/>
+                                <RadioButton Content="56000" GroupName="BaudRate" Checked="RadioButton_Checked"/>
                             </StackPanel>
 
                             <StackPanel>
-                                <RadioButton Content="57600" GroupName="group"  Checked="RadioButton_Checked"/>
-                                <RadioButton Content="115200" GroupName="group" Checked="RadioButton_Checked"/>
-                                <RadioButton Content="128000" GroupName="group" Checked="RadioButton_Checked"/>
-                                <RadioButton Content="256000" GroupName="group" Checked="RadioButton_Checked"/>
+                                <RadioButton Content="57600" GroupName="BaudRate"  Checked="RadioButton_Checked"/>
+                                <RadioButton Content="115200" GroupName="BaudRate" Checked="RadioButton_Checked"/>
+                                <RadioButton Content="128000" GroupName="BaudRate" Checked="RadioButton_Checked"/>
+                                <RadioButton Content="256000" GroupName="BaudRate" Checked="RadioButton_Checked"/>
                             </StackPanel>
 
                         </StackPanel>
@@ -102,10 +102,10 @@
                 <Border >
                     <StackPanel Height="120">
                         <Label Content="Data bits"/>
-                        <RadioButton Content="5" Margin="0 5 0 0"/>
-                        <RadioButton Content="6" Margin="0 5 0 0"/>
-                        <RadioButton Content="7" Margin="0 5 0 0"/>
-                        <RadioButton Content="8" Margin="0 5 0 0"/>
+                        <RadioButton Content="5" Margin="0 5 0 0" GroupName="DataBits" Checked="RadioButton_Checked"/>
+                        <RadioButton Content="6" Margin="0 5 0 0" GroupName="DataBits" Checked="RadioButton_Checked"/>
+                        <RadioButton Content="7" Margin="0 5 0 0" GroupName="DataBits" Checked="RadioButton_Checked"/>
+                        <RadioButton Content="8" Margin="0 5 0 0" GroupName="DataBits" Checked="RadioButton_Checked"/>
                     </StackPanel>
                 </Border>
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Top"/>
@@ -115,9 +115,9 @@
                 <Border >
                     <StackPanel Height="120">
                         <Label Content="Stop bits"/>
-                        <RadioButton Content="1" Margin="0 12 0 0"/>
-                        <RadioButton Content="1.5" Margin="0 12 0 0"/>
-                        <RadioButton Content="2" Margin="0 12 0 0"/>
+                        <RadioButton Content="1" Margin="0 12 0 0" GroupName="StopBits" Checked="RadioButton_Checked"/>
+                        <RadioButton Content="1.5" Margin="0 12 0 0" GroupName="StopBits" Checked="RadioButton_Checked"/>
+                        <RadioButton Content="2" Margin="0 12 0 0" GroupName="StopBits" Checked="RadioButton_Checked"/>
                     </StackPanel>
                 </Border>
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Top"/>

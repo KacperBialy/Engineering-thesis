@@ -23,6 +23,8 @@ namespace CubliApp
     public partial class MainWindow : Window
     {
         public int boudRate { get; set; }
+        public int dataBits { get; set; }
+        public int stopBits { get; set; }
         public MainWindow()
             {
                 InitializeComponent();
@@ -37,13 +39,18 @@ namespace CubliApp
                     comboBox_COMS.Items.Add(s);
                 }
             }
-
         }
 
         private void RadioButton_Checked(object sender, RoutedEventArgs e)
         {
             RadioButton radioButton = (RadioButton)sender;
-            boudRate = int.Parse(radioButton.Content.ToString());
+            if(radioButton.GroupName == "BaudRate")
+                boudRate = int.Parse(radioButton.Content.ToString());
+            else if(radioButton.GroupName == "DataBits")
+                dataBits = int.Parse(radioButton.Content.ToString());
+            else if(radioButton.GroupName == "StopBits")
+                stopBits = int.Parse(radioButton.Content.ToString());
+
         }
     }
 }
