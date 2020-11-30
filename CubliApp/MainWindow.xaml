@@ -44,7 +44,7 @@
             <DockPanel Margin="8">
                 <Border>
                     <StackPanel Orientation="Vertical" Height="120">
-                        <Button Content="Connect" Margin="5"/>
+                        <Button x:Name="btn_Connect" Content="Connect" Margin="5" Click="btn_Connect_Click"/>
                         <Button Content="Auto Connect" Margin="5"/>
                         <Button Content="Disconnect" Margin="5"/>
                         <Button x:Name="btn_ReScan" Content="ReScan" Margin="5" Click="btn_ReScan_Click"/>
@@ -74,7 +74,7 @@
                                 <RadioButton Content="1200" GroupName="BaudRate" Checked="RadioButton_Checked"/>
                                 <RadioButton Content="2400" GroupName="BaudRate" Checked="RadioButton_Checked"/>
                                 <RadioButton Content="4800" GroupName="BaudRate" Checked="RadioButton_Checked"/>
-                                <RadioButton Content="9600" GroupName="BaudRate" Checked="RadioButton_Checked"/>
+                                <RadioButton Content="9600" GroupName="BaudRate" Checked="RadioButton_Checked" IsChecked="True"/>
                             </StackPanel>
 
                             <StackPanel>
@@ -105,18 +105,32 @@
                         <RadioButton Content="5" Margin="0 5 0 0" GroupName="DataBits" Checked="RadioButton_Checked"/>
                         <RadioButton Content="6" Margin="0 5 0 0" GroupName="DataBits" Checked="RadioButton_Checked"/>
                         <RadioButton Content="7" Margin="0 5 0 0" GroupName="DataBits" Checked="RadioButton_Checked"/>
-                        <RadioButton Content="8" Margin="0 5 0 0" GroupName="DataBits" Checked="RadioButton_Checked"/>
+                        <RadioButton Content="8" Margin="0 5 0 0" GroupName="DataBits" Checked="RadioButton_Checked" IsChecked="True"/>
                     </StackPanel>
                 </Border>
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Top"/>
             </DockPanel>
-
+            
             <DockPanel Margin="8">
                 <Border >
                     <StackPanel Height="120">
                         <Label Content="Stop bits"/>
-                        <RadioButton Content="1" Margin="0 12 0 0" GroupName="StopBits" Checked="RadioButton_Checked"/>
-                        <RadioButton Content="1.5" Margin="0 12 0 0" GroupName="StopBits" Checked="RadioButton_Checked"/>
+                        <RadioButton Content="none" Margin="0 2 0 0" GroupName="Parity" Checked="RadioButton_Checked" IsChecked="True"/>
+                        <RadioButton Content="odd" Margin="0 2 0 0" GroupName="Parity" Checked="RadioButton_Checked"/>
+                        <RadioButton Content="even" Margin="0 2 0 0" GroupName="Parity" Checked="RadioButton_Checked"/>
+                        <RadioButton Content="mark" Margin="0 2 0 0" GroupName="Parity" Checked="RadioButton_Checked"/>
+                        <RadioButton Content="space" Margin="0 2 0 0" GroupName="Parity" Checked="RadioButton_Checked"/>
+                    </StackPanel>
+                </Border>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top"/>
+            </DockPanel>
+            
+            <DockPanel Margin="8">
+                <Border >
+                    <StackPanel Height="120">
+                        <Label Content="Stop bits"/>
+                        <RadioButton Content="1" Margin="0 12 0 0" GroupName="StopBits" Checked="RadioButton_Checked" IsChecked="True"/>
+                        <RadioButton Content="1,5" Margin="0 12 0 0" GroupName="StopBits" Checked="RadioButton_Checked"/>
                         <RadioButton Content="2" Margin="0 12 0 0" GroupName="StopBits" Checked="RadioButton_Checked"/>
                     </StackPanel>
                 </Border>
