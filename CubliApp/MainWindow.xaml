@@ -21,9 +21,15 @@
             <Setter Property="BorderThickness" Value="3"/>
             <Setter Property="DockPanel.Dock" Value="Top"/>
         </Style>
-
+        
+        <Style TargetType="Button">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+        
         <Style TargetType="Label">
-            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="12"/>
         </Style>
     </Window.Resources>
 
@@ -45,8 +51,8 @@
                 <Border>
                     <StackPanel Orientation="Vertical" Height="120">
                         <Button x:Name="btn_Connect" Content="Connect" Margin="5" Click="btn_Connect_Click"/>
+                        <Button x:Name="btn_Disconnect" Content="Disconnect" Margin="5" Click="btn_Disconnect_Click" IsEnabled="False"/>
                         <Button Content="Auto Connect" Margin="5"/>
-                        <Button Content="Disconnect" Margin="5"/>
                         <Button x:Name="btn_ReScan" Content="ReScan" Margin="5" Click="btn_ReScan_Click"/>
                     </StackPanel>
                 </Border>
@@ -57,7 +63,7 @@
                 <Border >
                     <StackPanel Orientation="Vertical" Height="120">
                         <Label Content="COM Port"/>
-                        <ComboBox x:Name="comboBox_COMS" Margin="10"/>
+                        <ComboBox x:Name="comboBox_COMS" Margin="10" SelectionChanged="comboBox_COMS_SelectionChanged"/>
                     </StackPanel>
                 </Border>
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Top"/>
@@ -136,11 +142,11 @@
                 </Border>
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Top"/>
             </DockPanel>
-            <Label Content="Disconnected" Margin="15 35 0 0" FontSize="45" Foreground="Red"/>
+            <Label x:Name="lbl_disconnect_connect" Content="Disconnected" Margin="15 50 0 0" FontSize="30" Foreground="Red"/>
         </StackPanel>
 
         <Border Grid.Row="1" Margin="5" CornerRadius="2" BorderThickness="1" Background="White" >
-            <TextBlock Grid.Row="1" Text="Otrzymane wiadomości" TextWrapping="Wrap" FontSize="12" Foreground="Black"/>
+            <TextBlock x:Name="txtBox_receivedMessages" Grid.Row="1" Text="Messages received" TextWrapping="Wrap" FontSize="13" Foreground="Black"/>
         </Border>
 
         <Grid Grid.Row="2">
@@ -149,13 +155,13 @@
                 <RowDefinition Height="4*"/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal">
-                <TextBox Text="123" Foreground="Black" Width="300" Margin="-5 0 0 0"/>
-                <Button Content="Send" FontWeight="Bold" Width="70"  FontSize ="20" Margin="10 0 0 0"/>
-                <Button Content="Clear All" FontWeight="Bold" Width="120" FontSize ="20" Margin="10 0 0 0"/>
+                <TextBox x:Name="txtBox_DataToSend" Text="" Foreground="Black" FontSize="13" Width="300" Margin="-5 0 0 0"/>
+                <Button x:Name="btn_Send" Content="Send" FontWeight="Bold" Width="70"  FontSize ="20" Margin="10 0 0 0" Click="btn_Send_Click"/>
+                <Button x:Name="btn_ClearAll" Content="Clear All" FontWeight="Bold" Width="120" FontSize ="20" Margin="10 0 0 0" Click="btn_ClearAll_Click"/>
             </StackPanel>
 
             <Border Grid.Row="1" Margin="5" CornerRadius="2" BorderThickness="1" Background="White" >
-                <TextBlock Grid.Row="1" Text="Wysłane wiadomości" TextWrapping="Wrap" FontSize="12" Foreground="Black"/>
+                <TextBlock x:Name="txtBox_sendMessages" Grid.Row="1" Text="Messages sent" TextWrapping="Wrap"  FontSize="13" Foreground="Black"/>
             </Border>
 
         </Grid>
