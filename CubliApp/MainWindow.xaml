@@ -24,7 +24,7 @@
         
         <Style TargetType="Button">
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontSize" Value="16"/>
         </Style>
         
         <Style TargetType="Label">
@@ -52,7 +52,6 @@
                     <StackPanel Orientation="Vertical" Height="120">
                         <Button x:Name="btn_Connect" Content="Connect" Margin="5" Click="btn_Connect_Click"/>
                         <Button x:Name="btn_Disconnect" Content="Disconnect" Margin="5" Click="btn_Disconnect_Click" IsEnabled="False"/>
-                        <Button Content="Auto Connect" Margin="5"/>
                         <Button x:Name="btn_ReScan" Content="ReScan" Margin="5" Click="btn_ReScan_Click"/>
                     </StackPanel>
                 </Border>
@@ -146,7 +145,9 @@
         </StackPanel>
 
         <Border Grid.Row="1" Margin="5" CornerRadius="2" BorderThickness="1" Background="White" >
+            <ScrollViewer>
             <TextBlock x:Name="txtBox_receivedMessages" Grid.Row="1" Text="Messages received" TextWrapping="Wrap" FontSize="13" Foreground="Black"/>
+            </ScrollViewer>
         </Border>
 
         <Grid Grid.Row="2">
@@ -161,7 +162,9 @@
             </StackPanel>
 
             <Border Grid.Row="1" Margin="5" CornerRadius="2" BorderThickness="1" Background="White" >
-                <TextBlock x:Name="txtBox_sendMessages" Grid.Row="1" Text="Messages sent" TextWrapping="Wrap"  FontSize="13" Foreground="Black"/>
+                <ScrollViewer>
+                    <TextBlock x:Name="txtBox_sendMessages" Grid.Row="1" Text="Messages sent" TextWrapping="Wrap"  FontSize="13" Foreground="Black"/>
+                </ScrollViewer>
             </Border>
 
         </Grid>

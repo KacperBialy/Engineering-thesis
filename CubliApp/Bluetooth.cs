@@ -8,13 +8,8 @@ namespace CubliApp
 {
     class Bluetooth
     {
-        private SerialPort _serialPort;
+        Ports port  = new Ports();
 
-        public int BoudRate { get; set; }
-        public int DataBits { get; set; }
-        public string Parity { get; set; }
-        public string StopBits { get; set; }
-        public string PortName { get; set; }
         public StringBuilder dataReceived { get; set; }
         public StringBuilder dataSend { get; set; }
         private Thread readThread { get; set; }
@@ -26,28 +21,14 @@ namespace CubliApp
         }
         private bool Configuration()
         {
-            bool isConfigurationOK = false;
-            if (PortName != null)
-            {
-                _serialPort = new SerialPort();
-
-                _serialPort.PortName = PortName;
-                _serialPort.BaudRate = BoudRate;
-                _serialPort.Parity = (Parity)Enum.Parse(typeof(Parity), Parity, true);
-                _serialPort.DataBits = DataBits;
-                _serialPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), StopBits, true);
-                _serialPort.ReadTimeout = 5000;
-                _serialPort.WriteTimeout = 5000;
-
-                isConfigurationOK = true;
-
+            
+                bool isConfigurationOK = port.CreatePort();
                 return isConfigurationOK;
-            }
-            else
-            {
-                MessageBox.Show("Select a port","Port problem",MessageBoxButton.OK,MessageBoxImage.Warning);
-                return isConfigurationOK;
-            }
+
+        }
+    public void UpdateConfiguration(string group,string value)
+        {
+            port.Update(group, value);
         }
         public bool Connect( MainWindow window, Bluetooth bluetooth)
         {
@@ -57,16 +38,18 @@ namespace CubliApp
             {
                 try
                 {
-                    _serialPort.Open();
+                    port.serialPort.Open();
                     IsPortOpen = ConnectionTest(window);
-                    if (IsPortOpen == true)
+                    if (IsPortOpen  == true)
                     {
+                        IsPortOpen = true;
                         readThread = new Thread(() => bluetooth.Read(window));
                         readThread.Start();
                     }
                 }
                 catch
                 {
+                    IsPortOpen = false;
                     MessageBox.Show("You have chosen the wrong port", "Port problem", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
@@ -79,16 +62,12 @@ namespace CubliApp
             IsPortOpen = false;
             readThread.Join();
 
-            _serialPort.DiscardInBuffer();
-            _serialPort.DiscardOutBuffer();
-            _serialPort.Write("0"); // 0->DISCONNECTION COMMAND
-            string message = _serialPort.ReadTo("#");
-            if (message == "END")
+            if (port.TestDisconnect() == "END")
             {
 
                 isDisconnectOK = true;
                 dataReceived.Append("End of transmission\n");
-                _serialPort.Close();
+                port.serialPort.Close();
                 window.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     window.txtBox_receivedMessages.Text = dataReceived.ToString();
@@ -103,11 +82,8 @@ namespace CubliApp
         }
         bool ConnectionTest(MainWindow window)
         {
-            _serialPort.DiscardInBuffer();
-            _serialPort.DiscardOutBuffer();
-            _serialPort.Write("1"); // 1->CONNECTION COMMAND
-            string message = _serialPort.ReadTo("#");
-            if (message == "OK")
+
+            if (port.TestConnection() == "OK")
             {
                 dataReceived.Append("Start of transmission\n");
                 window.Dispatcher.BeginInvoke(new Action(() =>
@@ -123,7 +99,7 @@ namespace CubliApp
         {
             if (IsPortOpen)
             {
-                _serialPort.Write(data);
+                port.serialPort.Write(data);
                 dataSend.Append($"{data}\n");
                 window.Dispatcher.BeginInvoke(new Action(() =>
                 {
@@ -137,7 +113,7 @@ namespace CubliApp
             {
                 try
                 {
-                    dataReceived.Append($"{_serialPort.ReadTo("#")}\n");
+                    dataReceived.Append($"{port.serialPort.ReadTo("#")}\n");
                     window.Dispatcher.BeginInvoke(new Action(() =>
                     {
                         window.txtBox_receivedMessages.Text = dataReceived.ToString();

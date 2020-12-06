@@ -1,10 +1,8 @@
-﻿using System.Threading;
+﻿using System.IO.Ports;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.IO.Ports;
 using System.Windows.Media;
-using System.Text;
-using System;
 
 namespace CubliApp
 {
@@ -37,22 +35,15 @@ namespace CubliApp
         private void RadioButton_Checked(object sender, RoutedEventArgs e)
         {
             RadioButton radioButton = (RadioButton)sender;
-            if (radioButton.GroupName == "BaudRate")
-                bluetooth.BoudRate = int.Parse(radioButton.Content.ToString());
-            else if (radioButton.GroupName == "DataBits")
-                bluetooth.DataBits = int.Parse(radioButton.Content.ToString());
-            else if (radioButton.GroupName == "Parity")
-                bluetooth.Parity = radioButton.Content.ToString();
-            else if (radioButton.GroupName == "StopBits")
-                bluetooth.StopBits = radioButton.Content.ToString();
+            bluetooth.UpdateConfiguration(radioButton.GroupName, radioButton.Content.ToString());
         }
 
         private void btn_Connect_Click(object sender, RoutedEventArgs e)
         {
-            btn_Disconnect.IsEnabled = true;
-            bool isConnection = bluetooth.Connect(this,bluetooth);
+            bool isConnection = bluetooth.Connect(this, bluetooth);
             if (isConnection == true)
             {
+                btn_Disconnect.IsEnabled = true;
                 lbl_disconnect_connect.Foreground = Brushes.Green;
                 lbl_disconnect_connect.Content = "Connected";
                 btn_Connect.IsEnabled = false;
@@ -73,14 +64,13 @@ namespace CubliApp
             else
             {
                 MessageBox.Show("Failed to disconnect", "Port problem", MessageBoxButton.OK, MessageBoxImage.Warning);
-
             }
         }
 
         private void btn_Send_Click(object sender, RoutedEventArgs e)
         {
             string data = txtBox_DataToSend.Text;
-            bluetooth.SendData(data,this);
+            bluetooth.SendData(data, this);
         }
 
         private void btn_ClearAll_Click(object sender, RoutedEventArgs e)
@@ -93,8 +83,8 @@ namespace CubliApp
 
         private void comboBox_COMS_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(comboBox_COMS.SelectedValue!=null)
-                bluetooth.PortName = comboBox_COMS.SelectedValue.ToString();
+            if (comboBox_COMS.SelectedValue != null)
+                bluetooth.UpdateConfiguration("Port",comboBox_COMS.SelectedValue.ToString());
         }
     }
 }
