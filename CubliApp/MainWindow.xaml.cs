@@ -3,6 +3,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Linq;
 
 namespace CubliApp
 {
@@ -19,11 +20,12 @@ namespace CubliApp
         private void ReScanPorts()
         {
             comboBox_COMS.Items.Clear();
-            foreach (string s in SerialPort.GetPortNames())
+            var coms = SerialPort.GetPortNames().OrderBy(name => name);
+            foreach (string name in coms)
             {
-                if (comboBox_COMS.Items.Contains(s) == false)
+                if (comboBox_COMS.Items.Contains(name) == false)
                 {
-                    comboBox_COMS.Items.Add(s);
+                    comboBox_COMS.Items.Add(name);
                 }
             }
         }
