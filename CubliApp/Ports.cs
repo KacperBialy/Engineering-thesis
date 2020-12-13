@@ -1,13 +1,12 @@
 ﻿using System;
 using System.IO.Ports;
 using System.Windows;
-
 namespace CubliApp
 {
     class Ports
     {
         public SerialPort serialPort;
-
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private int BoudRate { get; set; }
         private int DataBits { get; set; }
         private string Parity { get; set; }
@@ -18,17 +17,25 @@ namespace CubliApp
         {
             bool isPortOK = false;
 
+
             if (PortName != null)
             {
+                Parity Parity_ = (Parity)Enum.Parse(typeof(Parity), Parity, true);
+                StopBits StopBits_ = (StopBits)Enum.Parse(typeof(StopBits), StopBits, true);
+                int readTimeOut = 1000;
+                int writeTimeOut = 1000;
+                logger.Info($"Port Configuration:\nPortName: {PortName}\nBaudRate: {BoudRate}\nParity{Parity_.ToString()}\nDataBits: {DataBits}\nStopBits: {StopBits_.ToString()}\nReadTimeout: {readTimeOut}\nWriteTimeOut: {writeTimeOut}");
+
                 serialPort = new SerialPort();
 
                 serialPort.PortName = PortName;
                 serialPort.BaudRate = BoudRate;
-                serialPort.Parity = (Parity)Enum.Parse(typeof(Parity), Parity, true);
+                serialPort.Parity = Parity_;
                 serialPort.DataBits = DataBits;
-                serialPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), StopBits, true);
-                serialPort.ReadTimeout = 500;
-                serialPort.WriteTimeout = 500;
+                serialPort.StopBits = StopBits_;
+                serialPort.ReadTimeout = readTimeOut;
+                serialPort.WriteTimeout = writeTimeOut;
+
 
                 isPortOK = true;
                 return isPortOK;
@@ -39,7 +46,7 @@ namespace CubliApp
                 return isPortOK;
             }
         }
-        public void  Update(string group,string value)
+        public void Update(string group, string value)
         {
             if (group == "BaudRate")
                 BoudRate = int.Parse(value);

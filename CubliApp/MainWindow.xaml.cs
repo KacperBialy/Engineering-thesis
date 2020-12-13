@@ -9,10 +9,11 @@ namespace CubliApp
 {
     public partial class MainWindow : Window
     {
-
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         Bluetooth bluetooth = new Bluetooth();
         public MainWindow()
         {
+            Logger.Info($"App start");
             InitializeComponent();
             ReScanPorts();
         }
@@ -55,10 +56,11 @@ namespace CubliApp
 
         private void btn_Disconnect_Click(object sender, RoutedEventArgs e)
         {
-            btn_Connect.IsEnabled = true;
+            
             bool isDisconnectOK = bluetooth.Disconnect(this);
             if (isDisconnectOK == true)
             {
+                btn_Connect.IsEnabled = true;
                 lbl_disconnect_connect.Foreground = Brushes.Red;
                 lbl_disconnect_connect.Content = "Disconnected";
                 btn_Disconnect.IsEnabled = false;

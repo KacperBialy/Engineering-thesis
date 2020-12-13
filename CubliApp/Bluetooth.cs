@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO.Ports;
 using System.Text;
 using System.Threading;
 using System.Windows;
@@ -8,8 +7,8 @@ namespace CubliApp
 {
     class Bluetooth
     {
-        Ports port  = new Ports();
-
+        Ports port = new Ports();
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         public StringBuilder dataReceived { get; set; }
         public StringBuilder dataSend { get; set; }
         private Thread readThread { get; set; }
@@ -21,16 +20,16 @@ namespace CubliApp
         }
         private bool Configuration()
         {
-            
-                bool isConfigurationOK = port.CreatePort();
-                return isConfigurationOK;
+
+            bool isConfigurationOK = port.CreatePort();
+            return isConfigurationOK;
 
         }
-    public void UpdateConfiguration(string group,string value)
+        public void UpdateConfiguration(string group, string value)
         {
             port.Update(group, value);
         }
-        public bool Connect( MainWindow window, Bluetooth bluetooth)
+        public bool Connect(MainWindow window, Bluetooth bluetooth)
         {
             bool isConfigurationOK = Configuration();
 
@@ -39,9 +38,12 @@ namespace CubliApp
                 try
                 {
                     port.serialPort.Open();
+                    logger.Info("Port Open");
+
                     IsPortOpen = ConnectionTest(window);
-                    if (IsPortOpen  == true)
+                    if (IsPortOpen == true)
                     {
+                        logger.Info("Connected");
                         IsPortOpen = true;
                         readThread = new Thread(() => bluetooth.Read(window));
                         readThread.Start();
@@ -50,6 +52,7 @@ namespace CubliApp
                 catch
                 {
                     IsPortOpen = false;
+                    logger.Error("Problem with connection!");
                     MessageBox.Show("You have chosen the wrong port", "Port problem", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
@@ -62,34 +65,40 @@ namespace CubliApp
             IsPortOpen = false;
             readThread.Join();
 
-            if (port.TestDisconnect() == "END")
-            {
+            string endFrame = port.TestDisconnect();
+            logger.Info($"End frame received: {endFrame}");
 
+            if (endFrame.Contains("END"))
+            {
                 isDisconnectOK = true;
+
                 dataReceived.Append("End of transmission\n");
+
                 port.serialPort.Close();
+                logger.Info("Port closed");
+
                 window.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     window.txtBox_receivedMessages.Text = dataReceived.ToString();
                 }));
+
                 return isDisconnectOK;
             }
             else
             {
+                logger.Error("Problem with disconnection");
                 IsPortOpen = true;
                 return isDisconnectOK;
             }
         }
         bool ConnectionTest(MainWindow window)
         {
-
-            if (port.TestConnection() == "OK")
+            string startFrame = port.TestConnection();
+            logger.Info($"Initial frame received: {startFrame}");
+            if (port.TestConnection().Contains("OK"))
             {
                 dataReceived.Append("Start of transmission\n");
-                window.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    window.txtBox_receivedMessages.Text = dataReceived.ToString();
-                }));
+
                 return true;
             }
             else
@@ -118,8 +127,23 @@ namespace CubliApp
                     {
                         window.txtBox_receivedMessages.Text = dataReceived.ToString();
                     }));
+
+                    if (dataReceived.Length > 5000)
+                    {
+                        string[] data_splited = dataReceived.ToString().Split('\n');
+
+                        int range = 0;
+                        for (int i = 0; i < 50; i++)
+                        {
+                            range += data_splited[i].Length + 1;
+                        }
+                        dataReceived.Remove(0, range);
+                    }
                 }
-                catch (TimeoutException) { }
+                catch (TimeoutException exception)
+                {
+                    logger.Error(exception.Message);
+                }
             }
         }
     }
