@@ -1,0 +1,131 @@
+﻿<Window x:Class="CubliApp.Menu"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d" Height="600" Width="1080" WindowStyle="None" ResizeMode="CanResize" AllowsTransparency="True" Background="Transparent" Topmost="True" WindowStartupLocation="CenterScreen" Foreground="White">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="60"/>
+    </WindowChrome.WindowChrome>
+
+    <Grid x:Name="grid_main" Background="#FFFBFBFB" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="60"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <!--#region  Top bar-->
+        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Top" Background="#FF225C75"  >
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="1" >
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" WindowChrome.IsHitTestVisibleInChrome="True">
+
+                    <Viewbox>
+                        <Button Background="Transparent" Foreground="White" BorderThickness="0"  Click="Button_Click_Minimized">
+                            <materialDesign:PackIcon x:Name="button_Minimalize" Kind="WindowMinimize" />
+                        </Button>
+                    </Viewbox>
+
+                    <Viewbox>
+                        <Button Background="Transparent" Foreground="White" BorderThickness="0"   Click="Button_Click_Maximized" >
+                            <materialDesign:PackIcon Kind="WindowMaximize"/>
+                        </Button>
+                    </Viewbox>
+
+                    <Viewbox>
+                        <Button BorderThickness="0" Foreground="White"  Click="Button_Click_Exit" Background="Transparent">
+                            <materialDesign:PackIcon Kind="CloseCircle" />
+                        </Button>
+                    </Viewbox>
+
+                </StackPanel>
+
+            </Grid>
+        </Grid>
+        <!--#endregion-->
+
+        <!--#region Left bar-->
+        <Grid  Grid.Column="0" Grid.Row="1" Background="#FF225C75" >
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            
+            <Button x:Name="btn_PortConfig" Grid.Row="0" Background="Transparent" BorderBrush="Transparent" Margin="-1" Click="btn_PortConfig_Click" >
+                <Viewbox >
+                        <materialDesign:PackIcon Kind="Cube" Foreground="White"/>
+                </Viewbox>
+            </Button>
+            <Button Grid.Row="1" Background="Transparent" BorderBrush="Transparent" Margin="-1">
+                    <Viewbox >
+                    <materialDesign:PackIcon Kind="ViewDashboard" Foreground="White"/>
+                </Viewbox>
+                </Button>
+            <Button x:Name="btn_Plot"  Grid.Row="2" Background="Transparent" BorderBrush="Transparent" Margin="-1" Click="btn_Plot_Click">
+                    <Viewbox>
+                        <materialDesign:PackIcon Kind="ChartBellCurveCumulative" Foreground="White" />
+                </Viewbox>
+                </Button>
+
+            <Button Grid.Row="3" Background="Transparent" BorderBrush="Transparent" Margin="-1">
+                    <Viewbox >
+                        <materialDesign:PackIcon Kind="PeopleGroup" Foreground="White" />
+                </Viewbox>
+                </Button>
+            <Button Grid.Row="4" Background="Transparent" BorderBrush="Transparent" Margin="-1">
+                    <Viewbox >
+                        <materialDesign:PackIcon Kind="Github" Foreground="White" />
+                </Viewbox>
+                </Button>
+        </Grid>
+
+        <!--#endregion-->
+
+        <!--#region Contributors-->
+        <Grid x:Name="GridContributors" Grid.Column="1" Grid.Row="1" Visibility="Collapsed" >
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <!--#endregion-->
+
+        </Grid>
+        <!--#region Home-->
+        <Grid Grid.Row="2" Grid.Column="2" x:Name="GridHome" Visibility="Collapsed"  >
+            <TextBlock Text="HOME" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Red"/>
+        </Grid>
+        <!--#endregion-->
+
+        <!--#region Settings-->
+        <Grid Grid.Row="2" Grid.Column="2" x:Name="GridSettings"  Visibility="Collapsed" >
+            <TextBlock Text="Settings" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Red"/>
+        </Grid>
+        <!--#endregion-->
+
+        <!--#region Plot-->
+        <Grid Grid.Row="2" Grid.Column="2" x:Name="GridPlot" Visibility="Visible" >
+            <oxy:PlotView
+                x:Name="plt_main"
+                Model="{Binding separatedPlot.Model}" />
+        </Grid>
+        <!--#endregion-->
+
+    </Grid>
+</Window>

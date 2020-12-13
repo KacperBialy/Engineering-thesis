@@ -29,7 +29,7 @@ namespace CubliApp
         {
             port.Update(group, value);
         }
-        public bool Connect(MainWindow window, Bluetooth bluetooth)
+        public bool Connect(PortConfiguration window, Bluetooth bluetooth)
         {
             bool isConfigurationOK = Configuration();
 
@@ -58,7 +58,7 @@ namespace CubliApp
             }
             return IsPortOpen;
         }
-        public bool Disconnect(MainWindow window)
+        public bool Disconnect(PortConfiguration window)
         {
             bool isDisconnectOK = false;
 
@@ -91,7 +91,7 @@ namespace CubliApp
                 return isDisconnectOK;
             }
         }
-        bool ConnectionTest(MainWindow window)
+        bool ConnectionTest(PortConfiguration window)
         {
             string startFrame = port.TestConnection();
             logger.Info($"Initial frame received: {startFrame}");
@@ -104,7 +104,7 @@ namespace CubliApp
             else
                 return false;
         }
-        public void SendData(string data, MainWindow window)
+        public void SendData(string data, PortConfiguration window)
         {
             if (IsPortOpen)
             {
@@ -116,13 +116,14 @@ namespace CubliApp
                 }));
             }
         }
-        public void Read(MainWindow window)
+        public void Read(PortConfiguration window)
         {
             while (IsPortOpen)
             {
                 try
                 {
                     dataReceived.Append($"{port.serialPort.ReadTo("#")}\n");
+                    Plots.setData(dataReceived);
                     window.Dispatcher.BeginInvoke(new Action(() =>
                     {
                         window.txtBox_receivedMessages.Text = dataReceived.ToString();

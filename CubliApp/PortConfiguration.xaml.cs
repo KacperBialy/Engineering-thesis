@@ -7,17 +7,16 @@ using System.Linq;
 
 namespace CubliApp
 {
-    public partial class MainWindow : Window
+    public partial class PortConfiguration : Window
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         Bluetooth bluetooth = new Bluetooth();
-        public MainWindow()
+        public PortConfiguration()
         {
             Logger.Info($"App start");
             InitializeComponent();
             ReScanPorts();
         }
-
         private void ReScanPorts()
         {
             comboBox_COMS.Items.Clear();
@@ -29,6 +28,11 @@ namespace CubliApp
                     comboBox_COMS.Items.Add(name);
                 }
             }
+        }
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
+            this.Visibility = Visibility.Hidden;
         }
         private void btn_ReScan_Click(object sender, RoutedEventArgs e)
         {
@@ -90,5 +94,6 @@ namespace CubliApp
             if (comboBox_COMS.SelectedValue != null)
                 bluetooth.UpdateConfiguration("Port",comboBox_COMS.SelectedValue.ToString());
         }
+
     }
 }
