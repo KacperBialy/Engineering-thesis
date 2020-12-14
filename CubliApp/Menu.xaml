@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        mc:Ignorable="d" Height="600" Width="1080" WindowStyle="None" ResizeMode="CanResize" AllowsTransparency="True" Background="Transparent" Topmost="True" WindowStartupLocation="CenterScreen" Foreground="White">
+        mc:Ignorable="d" Height="600" Width="1080" WindowStyle="None" ResizeMode="CanResize" AllowsTransparency="True" Background="Transparent" WindowStartupLocation="CenterScreen" Foreground="White">
 
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="60"/>
@@ -123,6 +123,7 @@
         <Grid Grid.Row="2" Grid.Column="2" x:Name="GridPlot" Visibility="Visible" >
             <oxy:PlotView
                 x:Name="plt_main"
+                Background="AntiqueWhite"
                 Model="{Binding separatedPlot.Model}" />
         </Grid>
         <!--#endregion-->

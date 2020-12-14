@@ -118,6 +118,7 @@ namespace CubliApp
         }
         public void Read(PortConfiguration window)
         {
+            dataReceived = new StringBuilder();
             while (IsPortOpen)
             {
                 try

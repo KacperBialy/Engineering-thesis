@@ -9,6 +9,7 @@ namespace CubliApp
     {
         int maximized = 0;
         Window window = new PortConfiguration();
+        Plots plot;
         public Menu()
         {
             window.Visibility = Visibility.Hidden;
@@ -18,7 +19,6 @@ namespace CubliApp
         private void Button_Click_Exit(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
-
         }
 
         private void Button_Click_Maximized(object sender, RoutedEventArgs e)
@@ -47,7 +47,7 @@ namespace CubliApp
 
         private void btn_Plot_Click(object sender, RoutedEventArgs e)
         {
-            Plots plot = new Plots();
+            Plots plot = new Plots(plt_main);
             plot.CreatePlot();
         }
     }
