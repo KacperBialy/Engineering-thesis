@@ -10,6 +10,7 @@ namespace CubliApp
 {
     class Plots
     {
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private Thread updateThread { get; set; }
         private static StringBuilder data_received;
         private List<PlotView> sensor_plots;
@@ -32,12 +33,9 @@ namespace CubliApp
         {
             for (int i = 0; i < sensor_plots.Count; i++)
             {
-            sensor_plots[i].Model = CreateModel(lineSeries_sensor[i]);
-            sensor_plots[i].Controller = GetCustomController();
-            }
-            for (int i = 0; i < 3; i++)
-            {
-                if(i==0)
+                sensor_plots[i].Model = CreateModel(lineSeries_sensor[i]);
+                sensor_plots[i].Controller = GetCustomController();
+                if (i == 0)
                     sensor_plots[i].Model = SetUpLegend(sensor_plots[0].Model);
                 else
                     sensor_plots[i].Model.IsLegendVisible = false;
@@ -47,64 +45,99 @@ namespace CubliApp
         }
         public void UpdatePlot(List<LineSeries[]> lineSeries)
         {
+            int lineseries_count = lineSeries.Count;
+            int sensor_plots_count = sensor_plots.Count;
+
             while (true)
             {
-                int lineseries_count = lineSeries.Count;
-                int sensor_plots_count = sensor_plots.Count;
                 if (data_received != null)
                 {
                     if (data_received.Length > 0)
                     {
                         string[] data = data_received.ToString().Split('\n');
                         data_received = new StringBuilder();
-                        List<List<float>> group_data = new List<List<float>>();
-                        for (int i = 0; i < data.Length - 1; i++)
-                        {
-                            List<float> help = new List<float>();
-                            string[] line_splited = data[i].Split(';');
-
-                            for (int j = 0; j < line_splited.Length; j++)
-                            {
-                                help.Add(float.Parse(line_splited[j], CultureInfo.InvariantCulture));
-                            }
-
-                            group_data.Add(help);
-                        }
+                        List<List<List<float>>> group_data = GroupData(data);
 
                         for (int i = 0; i < group_data.Count; i++)
                         {
-                            for (int j = 0; j < lineseries_count; j++)
+                            for (int j = 0; j < group_data[i].Count; j++)
                             {
-                                for (int k = 0; k < lineseries_count; k++)
+                                for (int k = 0; k < group_data[i][j].Count; k++)
                                 {
-                                    lineSeries[j][k].Points.Add(new DataPoint(time, group_data[i][j]));
+                                    lineSeries[j][k].Points.Add(new DataPoint(time, group_data[i][j][k]));
                                 }
                             }
-                            time += 0.02;
+                            AutomaticSliding(ref lineSeries);
 
-                            if (time > 2)
-                            {
-                                for (int j = 0; j < lineseries_count; j++)
-                                {
-                                    for (int k = 0; k < lineseries_count; k++)
-                                    {
-                                        lineSeries[j][k].Points.RemoveAt(0);
-                                    }
-                                }
-                            }
+                            if (i == lineseries_count)
+                                time += 0.5;
                         }
-                        for (int i = 0; i < sensor_plots_count; i++)
-                        {
-                        sensor_plots[i].InvalidatePlot(true);
-                        }
+                        sensor_plots.ForEach(x => x.InvalidatePlot(true));
                     }
                 }
             }
         }
+        private void AutomaticSliding(ref List<LineSeries[]> listLineSeries)
+        {
+            if (time > 2)
+            {
+                for (int j = 0; j < listLineSeries.Count; j++)
+                {
+                    for (int k = 0; k < 8; k++)
+                    {
+                        listLineSeries[j][k].Points.RemoveAt(0);
+                    }
+                }
+            }
+        }
+
+        private List<List<List<float>>> GroupData(string[] data)
+        {
+            List<List<List<float>>> group_data = new List<List<List<float>>>();
+
+            for (int i = 0; i < data.Length - 1; i++)
+            {
+                List<float> help = new List<float>();
+                List<List<float>> help_all = new List<List<float>>();
+
+                string[] line_splited = data[i].Split(';');
+                int line_splited_length = line_splited.Length;
+                int group_length = line_splited_length / 3;
+
+                for (int j = 0; j < line_splited_length; j++)
+                {
+                    if (j < group_length)
+                        help.Add(float.Parse(line_splited[j], CultureInfo.InvariantCulture));
+                    else if (j == group_length)
+                    {
+                        help_all.Add(help);
+                        help = new List<float>();
+                        help.Add(float.Parse(line_splited[j], CultureInfo.InvariantCulture));
+                    }
+                    else if (j >= group_length & j < group_length * 2)
+                    {
+                        help.Add(float.Parse(line_splited[j], CultureInfo.InvariantCulture));
+                    }
+                    else if (j == group_length * 2)
+                    {
+                        help_all.Add(help);
+                        help = new List<float>();
+                        help.Add(float.Parse(line_splited[j], CultureInfo.InvariantCulture));
+                    }
+                    else
+                    {
+                        help.Add(float.Parse(line_splited[j], CultureInfo.InvariantCulture));
+                    }
+                }
+                help_all.Add(help);
+                group_data.Add(help_all);
+            }
+            return group_data;
+        }
         private PlotModel CreateModel(LineSeries[] lineSeries)
         {
             PlotModel model = new PlotModel();
-            
+
             for (int i = 0; i < lineSeries.Length; i++)
             {
                 lineSeries[i] = new LineSeries();

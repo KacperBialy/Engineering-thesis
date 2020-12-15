@@ -73,11 +73,26 @@ namespace CubliApp
             serialPort.DiscardInBuffer();
             serialPort.DiscardOutBuffer();
         }
-        public string TestConnection()
+        public bool TestConnection()
         {
             ClearBuffers();
             serialPort.Write("1"); // 1->CONNECTION COMMAND
-            return serialPort.ReadTo("#");
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+            while (true)
+            {
+                TimeSpan ts = stopWatch.Elapsed;
+                float time = ts.Seconds;
+                string frame = serialPort.ReadTo("#");
+                logger.Debug($"Connection frame: {frame}");
+                if (frame.Contains("OK"))
+                {
+                    return true;
+                }
+                if (time > 0)
+                    break;
+            }
+            return false;
         }
         public bool TestDisconnect()
         {
@@ -85,17 +100,17 @@ namespace CubliApp
             serialPort.Write("0"); // 0->DISCONNECTION COMMAND
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
-            TimeSpan ts = stopWatch.Elapsed;
             while (true)
             {
-                float time = ts.Milliseconds;
+                TimeSpan ts = stopWatch.Elapsed;
+                float time = ts.Seconds;
                 string frame = serialPort.ReadTo("#");
-                logger.Debug(frame);
-                if(frame.Contains("END"))
+                logger.Debug($"Disconnection frame: {frame}");
+                if (frame.Contains("END"))
                 {
                     return true;
                 }
-                if (time > 1000)
+                if (time > 0)
                     break;
             }
             return false;

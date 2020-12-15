@@ -91,14 +91,8 @@ namespace CubliApp
         }
         bool ConnectionTest(PortConfiguration window)
         {
-            string startFrame = port.TestConnection();
-            logger.Info($"Initial frame received: {startFrame}");
-            if (port.TestConnection().Contains("OK"))
-            {
-                dataReceived.Append("Start of transmission\n");
-
+            if (port.TestConnection())
                 return true;
-            }
             else
                 return false;
         }
@@ -133,7 +127,7 @@ namespace CubliApp
                         string[] data_splited = dataReceived.ToString().Split('\n');
 
                         int range = 0;
-                        for (int i = 0; i < 50; i++)
+                        for (int i = 0; i < data_splited.Length - 1; i++)
                         {
                             range += data_splited[i].Length + 1;
                         }
