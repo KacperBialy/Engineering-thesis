@@ -1,6 +1,7 @@
 ﻿using OxyPlot;
 using OxyPlot.Wpf;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Threading;
 using LineSeries = OxyPlot.Series.LineSeries;
@@ -11,36 +12,45 @@ namespace CubliApp
     {
         private Thread updateThread { get; set; }
         private static StringBuilder data_received;
-        private PlotView plot;
-        private LineSeries[] lineSeries;
+        private List<PlotView> sensor_plots;
+        private List<LineSeries[]> lineSeries_sensor;
         private double time;
         private string[] Titles = { "AccX", "AccY", "AccZ", "GyrX", "GyrY", "GyrZ", "Roll", "Pitch" };
-        public Plots(PlotView plt)
+        public Plots(PlotView plt_sensor_1, PlotView plt_sensor_2, PlotView plt_sensor_3)
         {
-            plot = plt;
-            lineSeries = new LineSeries[8];
+            sensor_plots = new List<PlotView>() { plt_sensor_1, plt_sensor_2, plt_sensor_3 };
+            lineSeries_sensor = new List<LineSeries[]>();
+            for (int i = 0; i < sensor_plots.Count; i++)
+            {
+                lineSeries_sensor.Add(new LineSeries[8]);
+            }
+
             time = 0;
         }
         public static void setData(StringBuilder data) { data_received = data; }
-        public void CreatePlot()
+        public void CreatePlots()
         {
-            PlotModel model = new PlotModel();
-            plot.Model = model;
-            model = SetUpLegend(model);
-            for (int i = 0; i < lineSeries.Length; i++)
+            for (int i = 0; i < sensor_plots.Count; i++)
             {
-                lineSeries[i] = new LineSeries();
-                lineSeries[i].Title = Titles[i];
-                model.Series.Add(lineSeries[i]);
+            sensor_plots[i].Model = CreateModel(lineSeries_sensor[i]);
+            sensor_plots[i].Controller = GetCustomController();
             }
-            plot.Controller = GetCustomController();
-            updateThread = new Thread(UpdatePlot);
+            for (int i = 0; i < 3; i++)
+            {
+                if(i==0)
+                    sensor_plots[i].Model = SetUpLegend(sensor_plots[0].Model);
+                else
+                    sensor_plots[i].Model.IsLegendVisible = false;
+            }
+            updateThread = new Thread(() => UpdatePlot(lineSeries_sensor));
             updateThread.Start();
         }
-        public void UpdatePlot()
+        public void UpdatePlot(List<LineSeries[]> lineSeries)
         {
             while (true)
             {
+                int lineseries_count = lineSeries.Count;
+                int sensor_plots_count = sensor_plots.Count;
                 if (data_received != null)
                 {
                     if (data_received.Length > 0)
@@ -55,7 +65,7 @@ namespace CubliApp
 
                             for (int j = 0; j < line_splited.Length; j++)
                             {
-                                help.Add(float.Parse(line_splited[j]));
+                                help.Add(float.Parse(line_splited[j], CultureInfo.InvariantCulture));
                             }
 
                             group_data.Add(help);
@@ -63,26 +73,45 @@ namespace CubliApp
 
                         for (int i = 0; i < group_data.Count; i++)
                         {
-
-                            for (int j = 0; j < lineSeries.Length; j++)
+                            for (int j = 0; j < lineseries_count; j++)
                             {
-                                lineSeries[j].Points.Add(new DataPoint(time, group_data[i][j]));
+                                for (int k = 0; k < lineseries_count; k++)
+                                {
+                                    lineSeries[j][k].Points.Add(new DataPoint(time, group_data[i][j]));
+                                }
                             }
                             time += 0.02;
 
                             if (time > 2)
                             {
-                                for (int j = 0; j < lineSeries.Length; j++)
+                                for (int j = 0; j < lineseries_count; j++)
                                 {
-                                    lineSeries[j].Points.RemoveAt(0);
+                                    for (int k = 0; k < lineseries_count; k++)
+                                    {
+                                        lineSeries[j][k].Points.RemoveAt(0);
+                                    }
                                 }
                             }
                         }
-
-                        plot.InvalidatePlot(true);
+                        for (int i = 0; i < sensor_plots_count; i++)
+                        {
+                        sensor_plots[i].InvalidatePlot(true);
+                        }
                     }
                 }
             }
+        }
+        private PlotModel CreateModel(LineSeries[] lineSeries)
+        {
+            PlotModel model = new PlotModel();
+            
+            for (int i = 0; i < lineSeries.Length; i++)
+            {
+                lineSeries[i] = new LineSeries();
+                lineSeries[i].Title = Titles[i];
+                model.Series.Add(lineSeries[i]);
+            }
+            return model;
         }
         private PlotModel SetUpLegend(PlotModel plotModel)
         {

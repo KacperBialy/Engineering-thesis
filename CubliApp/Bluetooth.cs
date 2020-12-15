@@ -65,10 +65,8 @@ namespace CubliApp
             IsPortOpen = false;
             readThread.Join();
 
-            string endFrame = port.TestDisconnect();
-            logger.Info($"End frame received: {endFrame}");
 
-            if (endFrame.Contains("END"))
+            if (port.TestDisconnect())
             {
                 isDisconnectOK = true;
 

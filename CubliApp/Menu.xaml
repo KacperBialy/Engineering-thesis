@@ -121,8 +121,23 @@
 
         <!--#region Plot-->
         <Grid Grid.Row="2" Grid.Column="2" x:Name="GridPlot" Visibility="Visible" >
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
             <oxy:PlotView
-                x:Name="plt_main"
+                x:Name="plt_sensor_1"
+                Background="AntiqueWhite"
+                Model="{Binding separatedPlot.Model}" />            
+            <oxy:PlotView
+                Grid.Row="1"
+                x:Name="plt_sensor_2"
+                Background="AntiqueWhite"
+                Model="{Binding separatedPlot.Model}" />            
+            <oxy:PlotView
+                Grid.Row="2"
+                x:Name="plt_sensor_3"
                 Background="AntiqueWhite"
                 Model="{Binding separatedPlot.Model}" />
         </Grid>

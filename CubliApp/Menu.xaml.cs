@@ -47,8 +47,8 @@ namespace CubliApp
 
         private void btn_Plot_Click(object sender, RoutedEventArgs e)
         {
-            Plots plot = new Plots(plt_main);
-            plot.CreatePlot();
+            Plots plot = new Plots(plt_sensor_1,plt_sensor_2,plt_sensor_3);
+            plot.CreatePlots();
         }
     }
 }
