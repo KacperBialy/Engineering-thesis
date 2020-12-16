@@ -17,6 +17,7 @@ namespace CubliApp
         private List<LineSeries[]> lineSeries_sensor;
         private double time;
         private string[] Titles = { "AccX", "AccY", "AccZ", "GyrX", "GyrY", "GyrZ", "Roll", "Pitch" };
+        private bool status;
         public Plots(PlotView plt_sensor_1, PlotView plt_sensor_2, PlotView plt_sensor_3)
         {
             sensor_plots = new List<PlotView>() { plt_sensor_1, plt_sensor_2, plt_sensor_3 };
@@ -27,6 +28,7 @@ namespace CubliApp
             }
 
             time = 0;
+            status = true;
         }
         public static void setData(StringBuilder data) { data_received = data; }
         public void CreatePlots()
@@ -47,7 +49,7 @@ namespace CubliApp
         {
             int lineseries_count = lineSeries.Count;
             int sensor_plots_count = sensor_plots.Count;
-
+            int index = 0;
             while (true)
             {
                 if (data_received != null)
@@ -60,21 +62,27 @@ namespace CubliApp
 
                         for (int i = 0; i < group_data.Count; i++)
                         {
-                            for (int j = 0; j < group_data[i].Count; j++)
+                            var a = group_data[i];
+                            for (int j = 0; j < a.Count; j++)
                             {
-                                for (int k = 0; k < group_data[i][j].Count; k++)
+                                var b = group_data[i][j];
+                                for (int k = 0; k < b.Count; k++)
                                 {
-                                    lineSeries[j][k].Points.Add(new DataPoint(time, group_data[i][j][k]));
+                                    var c = group_data[i][j][k];
+                                    DataPoint newPoint = new DataPoint(time, c);
+                                    lineSeries[j][k].Points.Add(newPoint);
                                 }
                             }
                             AutomaticSliding(ref lineSeries);
-
-                            if (i == lineseries_count)
-                                time += 0.5;
+                            logger.Debug($"Index:{index} time: {time}");
+                            index++;
+                            time += 0.05;
                         }
+
                         sensor_plots.ForEach(x => x.InvalidatePlot(true));
                     }
                 }
+                Bluetooth.SetStatusOfPlot(true);
             }
         }
         private void AutomaticSliding(ref List<LineSeries[]> listLineSeries)

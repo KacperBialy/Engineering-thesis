@@ -7,16 +7,20 @@ namespace CubliApp
 {
     class Bluetooth
     {
-        Ports port = new Ports();
+        Ports port;
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         public StringBuilder dataReceived { get; set; }
         public StringBuilder dataSend { get; set; }
+        public StringBuilder dataToPlot { get; set; }
         private Thread readThread { get; set; }
         private bool IsPortOpen { get; set; }
+        private static bool statusOfPlot { get; set; }
         public Bluetooth()
         {
             dataReceived = new StringBuilder();
+            dataToPlot = new StringBuilder();
             dataSend = new StringBuilder();
+            port = new Ports();
         }
         private bool Configuration()
         {
@@ -44,7 +48,6 @@ namespace CubliApp
                     if (IsPortOpen == true)
                     {
                         logger.Info("Connected");
-                        IsPortOpen = true;
                         readThread = new Thread(() => bluetooth.Read(window));
                         readThread.Start();
                     }
@@ -64,7 +67,6 @@ namespace CubliApp
 
             IsPortOpen = false;
             readThread.Join();
-
 
             if (port.TestDisconnect())
             {
@@ -115,8 +117,9 @@ namespace CubliApp
             {
                 try
                 {
-                    dataReceived.Append($"{port.serialPort.ReadTo("#")}\n");
-                    Plots.setData(dataReceived);
+                    string readData = ($"{port.serialPort.ReadTo("#")}\n");
+                    dataReceived.Append(readData);
+                    sendDataToPlot(readData);
                     window.Dispatcher.BeginInvoke(new Action(() =>
                     {
                         window.txtBox_receivedMessages.Text = dataReceived.ToString();
@@ -139,6 +142,22 @@ namespace CubliApp
                     logger.Error(exception.Message);
                 }
             }
+        }
+        public static void SetStatusOfPlot(bool status)
+        {
+            statusOfPlot = status;
+        }
+
+        public void sendDataToPlot(string readData)
+        {
+            dataToPlot.Append(readData);
+            if (statusOfPlot)
+            {
+                Plots.setData(dataToPlot);
+                dataToPlot = new StringBuilder();
+                SetStatusOfPlot(false);
+            }
+
         }
     }
 }
