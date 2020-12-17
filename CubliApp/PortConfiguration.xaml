@@ -79,7 +79,7 @@
                                 <RadioButton Content="1200" GroupName="BaudRate" Checked="RadioButton_Checked"/>
                                 <RadioButton Content="2400" GroupName="BaudRate" Checked="RadioButton_Checked"/>
                                 <RadioButton Content="4800" GroupName="BaudRate" Checked="RadioButton_Checked"/>
-                                <RadioButton Content="9600" GroupName="BaudRate" Checked="RadioButton_Checked" IsChecked="True"/>
+                                <RadioButton Content="9600" GroupName="BaudRate" Checked="RadioButton_Checked"/>
                             </StackPanel>
 
                             <StackPanel>
@@ -92,7 +92,7 @@
 
                             <StackPanel>
                                 <RadioButton Content="57600" GroupName="BaudRate"  Checked="RadioButton_Checked"/>
-                                <RadioButton Content="115200" GroupName="BaudRate" Checked="RadioButton_Checked"/>
+                                <RadioButton Content="115200" GroupName="BaudRate" Checked="RadioButton_Checked" IsChecked="True"/>
                                 <RadioButton Content="128000" GroupName="BaudRate" Checked="RadioButton_Checked"/>
                                 <RadioButton Content="256000" GroupName="BaudRate" Checked="RadioButton_Checked"/>
                             </StackPanel>
@@ -119,7 +119,7 @@
             <DockPanel Margin="8">
                 <Border >
                     <StackPanel Height="120">
-                        <Label Content="Stop bits"/>
+                        <Label Content="Parity"/>
                         <RadioButton Content="none" Margin="0 2 0 0" GroupName="Parity" Checked="RadioButton_Checked" IsChecked="True"/>
                         <RadioButton Content="odd" Margin="0 2 0 0" GroupName="Parity" Checked="RadioButton_Checked"/>
                         <RadioButton Content="even" Margin="0 2 0 0" GroupName="Parity" Checked="RadioButton_Checked"/>

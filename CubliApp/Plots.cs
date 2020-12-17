@@ -1,9 +1,11 @@
 ﻿using OxyPlot;
 using OxyPlot.Wpf;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Threading;
+using System.Windows.Threading;
 using LineSeries = OxyPlot.Series.LineSeries;
 
 namespace CubliApp
@@ -11,8 +13,10 @@ namespace CubliApp
     class Plots
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        private Thread updateThread { get; set; }
         private static StringBuilder data_received;
+        private DispatcherTimer timer;
+
+        private Thread updateThread { get; set; }
         private List<PlotView> sensor_plots;
         private List<LineSeries[]> lineSeries_sensor;
         private double time;
@@ -26,6 +30,11 @@ namespace CubliApp
             {
                 lineSeries_sensor.Add(new LineSeries[8]);
             }
+
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(0.1);
+            timer.Tick += RefreshPlots;
+            timer.Start();
 
             time = 0;
             status = true;
@@ -47,9 +56,8 @@ namespace CubliApp
         }
         public void UpdatePlot(List<LineSeries[]> lineSeries)
         {
-            int lineseries_count = lineSeries.Count;
-            int sensor_plots_count = sensor_plots.Count;
             int index = 0;
+
             while (true)
             {
                 if (data_received != null)
@@ -78,16 +86,19 @@ namespace CubliApp
                             index++;
                             time += 0.05;
                         }
-
-                        sensor_plots.ForEach(x => x.InvalidatePlot(true));
                     }
                 }
                 Bluetooth.SetStatusOfPlot(true);
             }
         }
+        void RefreshPlots(object sender, EventArgs e)
+        {
+            sensor_plots.ForEach(x => x.InvalidatePlot(true));
+
+        }
         private void AutomaticSliding(ref List<LineSeries[]> listLineSeries)
         {
-            if (time > 2)
+            if (time > 10)
             {
                 for (int j = 0; j < listLineSeries.Count; j++)
                 {
