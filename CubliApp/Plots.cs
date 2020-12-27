@@ -2,44 +2,43 @@
 using OxyPlot.Wpf;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using System.Threading;
-using System.Windows.Threading;
 using LineSeries = OxyPlot.Series.LineSeries;
 
 namespace CubliApp
 {
     class Plots
     {
-        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private static StringBuilder data_received;
-        private DispatcherTimer timer;
+        static System.Timers.Timer _timer = new System.Timers.Timer();
 
         private Thread updateThread { get; set; }
         private List<PlotView> sensor_plots;
-        private List<LineSeries[]> lineSeries_sensor;
+        private List<LineSeries[]> lineSeries_sensor = new List<LineSeries[]>();
         private double time;
         private string[] Titles = { "AccX", "AccY", "AccZ", "GyrX", "GyrY", "GyrZ", "Roll", "Pitch" };
-        private bool status;
+        static bool[] AxisEnables = new bool[8] { true, true, true, true, true, true, true, true };
+
         public Plots(PlotView plt_sensor_1, PlotView plt_sensor_2, PlotView plt_sensor_3)
         {
             sensor_plots = new List<PlotView>() { plt_sensor_1, plt_sensor_2, plt_sensor_3 };
-            lineSeries_sensor = new List<LineSeries[]>();
+
             for (int i = 0; i < sensor_plots.Count; i++)
             {
                 lineSeries_sensor.Add(new LineSeries[8]);
             }
 
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(0.1);
-            timer.Tick += RefreshPlots;
-            timer.Start();
+            _timer.Interval = 500;
+            _timer.Elapsed += UpdatePlots;
+            _timer.Enabled = true;
 
             time = 0;
-            status = true;
         }
         public static void setData(StringBuilder data) { data_received = data; }
+        public static void setAxisEnables(bool[] axisEnables) { AxisEnables = axisEnables; }
         public void CreatePlots()
         {
             for (int i = 0; i < sensor_plots.Count; i++)
@@ -56,8 +55,8 @@ namespace CubliApp
         }
         public void UpdatePlot(List<LineSeries[]> lineSeries)
         {
-            int index = 0;
-
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             while (true)
             {
                 if (data_received != null)
@@ -78,36 +77,47 @@ namespace CubliApp
                                 {
                                     var c = group_data[i][j][k];
                                     DataPoint newPoint = new DataPoint(time, c);
-                                    lineSeries[j][k].Points.Add(newPoint);
+                                    if (AxisEnables[k])
+                                        lineSeries[j][k].Points.Add(newPoint);
+                                    else
+                                        lineSeries[j][k].Points.Clear();
+
                                 }
                             }
                             AutomaticSliding(ref lineSeries);
-                            logger.Debug($"Index:{index} time: {time}");
-                            index++;
-                            time += 0.05;
+                            time += stopwatch.Elapsed.Milliseconds / 1000.0;
+                            stopwatch.Restart();
                         }
                     }
                 }
                 Bluetooth.SetStatusOfPlot(true);
             }
         }
-        void RefreshPlots(object sender, EventArgs e)
+        private void UpdatePlots(object sender, EventArgs e)
         {
             sensor_plots.ForEach(x => x.InvalidatePlot(true));
-
         }
         private void AutomaticSliding(ref List<LineSeries[]> listLineSeries)
         {
-            if (time > 10)
+            for (int j = 0; j < listLineSeries.Count; j++)
             {
-                for (int j = 0; j < listLineSeries.Count; j++)
+                for (int k = 0; k < 8; k++)
                 {
-                    for (int k = 0; k < 8; k++)
+                    if (AxisEnables[k])
                     {
-                        listLineSeries[j][k].Points.RemoveAt(0);
+                        if ((listLineSeries[j][k].MaxX - listLineSeries[j][k].MinX) > 10)
+                            listLineSeries[j][k].Points.RemoveAt(0);
+                    }
+                    else
+                    {
+                        if (listLineSeries[j][k].Points.Count > 0)
+                        {
+                            listLineSeries[j][k].Points.Clear();
+                        }
                     }
                 }
             }
+
         }
 
         private List<List<List<float>>> GroupData(string[] data)
@@ -120,32 +130,52 @@ namespace CubliApp
                 List<List<float>> help_all = new List<List<float>>();
 
                 string[] line_splited = data[i].Split(';');
+                if (line_splited.Length % 24 != 0)
+                    break;
                 int line_splited_length = line_splited.Length;
                 int group_length = line_splited_length / 3;
 
                 for (int j = 0; j < line_splited_length; j++)
                 {
+
                     if (j < group_length)
-                        help.Add(float.Parse(line_splited[j], CultureInfo.InvariantCulture));
+                    {
+                        if (float.TryParse(line_splited[j], NumberStyles.Float, CultureInfo.InvariantCulture, out float value))
+                        {
+                            help.Add(value);
+                        }
+                    }
                     else if (j == group_length)
                     {
                         help_all.Add(help);
                         help = new List<float>();
-                        help.Add(float.Parse(line_splited[j], CultureInfo.InvariantCulture));
+                        if (float.TryParse(line_splited[j], NumberStyles.Float, CultureInfo.InvariantCulture, out float value))
+                        {
+                            help.Add(value);
+                        }
                     }
                     else if (j >= group_length & j < group_length * 2)
                     {
-                        help.Add(float.Parse(line_splited[j], CultureInfo.InvariantCulture));
+                        if (float.TryParse(line_splited[j], NumberStyles.Float, CultureInfo.InvariantCulture, out float value))
+                        {
+                            help.Add(value);
+                        }
                     }
                     else if (j == group_length * 2)
                     {
                         help_all.Add(help);
                         help = new List<float>();
-                        help.Add(float.Parse(line_splited[j], CultureInfo.InvariantCulture));
+                        if (float.TryParse(line_splited[j], NumberStyles.Float, CultureInfo.InvariantCulture, out float value))
+                        {
+                            help.Add(value);
+                        }
                     }
                     else
                     {
-                        help.Add(float.Parse(line_splited[j], CultureInfo.InvariantCulture));
+                        if (float.TryParse(line_splited[j], NumberStyles.Float, CultureInfo.InvariantCulture, out float value))
+                        {
+                            help.Add(value);
+                        }
                     }
                 }
                 help_all.Add(help);

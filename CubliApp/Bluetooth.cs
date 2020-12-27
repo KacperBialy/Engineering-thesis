@@ -2,6 +2,7 @@
 using System.Text;
 using System.Threading;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace CubliApp
 {
@@ -47,6 +48,13 @@ namespace CubliApp
                     IsPortOpen = ConnectionTest(window);
                     if (IsPortOpen == true)
                     {
+                        dataReceived.Append("Start of transmission\n");
+
+                        window.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            window.txtBox_receivedMessages.Text = dataReceived.ToString();
+                        }));
+
                         logger.Info("Connected");
                         readThread = new Thread(() => bluetooth.Read(window));
                         readThread.Start();
@@ -112,30 +120,12 @@ namespace CubliApp
         }
         public void Read(PortConfiguration window)
         {
-            dataReceived = new StringBuilder();
             while (IsPortOpen)
             {
                 try
                 {
                     string readData = ($"{port.serialPort.ReadTo("#")}\n");
-                    dataReceived.Append(readData);
                     sendDataToPlot(readData);
-                    window.Dispatcher.BeginInvoke(new Action(() =>
-                    {
-                        window.txtBox_receivedMessages.Text = dataReceived.ToString();
-                    }));
-
-                    if (dataReceived.Length > 5000)
-                    {
-                        string[] data_splited = dataReceived.ToString().Split('\n');
-
-                        int range = 0;
-                        for (int i = 0; i < data_splited.Length - 1; i++)
-                        {
-                            range += data_splited[i].Length + 1;
-                        }
-                        dataReceived.Remove(0, range);
-                    }
                 }
                 catch (TimeoutException exception)
                 {
@@ -153,9 +143,9 @@ namespace CubliApp
             dataToPlot.Append(readData);
             if (statusOfPlot)
             {
+                SetStatusOfPlot(false);
                 Plots.setData(dataToPlot);
                 dataToPlot = new StringBuilder();
-                SetStatusOfPlot(false);
             }
 
         }
