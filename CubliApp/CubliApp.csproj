@@ -88,7 +88,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CubeControll.xaml.cs">
+      <DependentUpon>CubeControll.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel3d.cs" />
+    <Page Include="CubeControll.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="PortConfiguration.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

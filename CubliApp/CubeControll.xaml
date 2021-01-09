@@ -1,0 +1,72 @@
+﻿<Window x:Class="CubliApp.CubeControll"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CubliApp"
+        xmlns:helix="http://helix-toolkit.org/wpf"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="CubeControll" MinHeight="200" MinWidth="200" Height="450" Width="800">
+    
+    <Grid x:Name="grid_Controll" Grid.Row="2" Grid.Column="2">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <Grid x:Name="grid_Controll2" Grid.Row="0">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.1*"/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition Height="0.1*"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.3*"/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="btn_upJump" Grid.Row="1" Grid.Column="3" Margin="1" Background="White" Click="btn_Rotate">
+                <Viewbox>
+                    <materialDesign:PackIcon Kind="ArrowUp" Background="Transparent" Foreground="#FF225C75" />
+                </Viewbox>
+            </Button>
+
+
+            <Button x:Name="btn_up" Grid.Row="2" Grid.Column="3" Margin="1" Background="White" Click="btn_Rotate">
+                <Viewbox>
+                    <materialDesign:PackIcon Kind="ArrowTop" Background="Transparent" Foreground="#FF225C75" />
+                </Viewbox>
+            </Button>
+
+
+            <Button x:Name="btn_ResetView" Grid.Column="3" Grid.Row="3" Margin="1" Background="White" Click="btn_ResetView_Click" >
+                <Viewbox>
+                    <materialDesign:PackIcon Kind="Cube" Background="Transparent" Foreground="#FF225C75" />
+                </Viewbox>
+            </Button>
+
+            <Button x:Name="btn_left"  Grid.Column="2" Grid.Row="3" Margin="1" Background="White" Click="btn_Rotate">
+                <Viewbox>
+                    <materialDesign:PackIcon Kind="ArrowLeft" Background="Transparent" Foreground="#FF225C75" />
+                </Viewbox>
+            </Button>
+            <Button x:Name="btn_leftJump"  Grid.Column="1" Grid.Row="3" Margin="1" Background="White" Click="btn_Rotate">
+                <Viewbox>
+                    <materialDesign:PackIcon Kind="ArrowLeft" Background="Transparent" Foreground="#FF225C75" />
+                </Viewbox>
+            </Button>
+
+        </Grid>
+        <Grid Grid.Row="1" Grid.Column="1"  x:Name="GridSettings">
+            <helix:HelixViewport3D x:Name="viewPort3d" Grid.RowSpan="2" ShowViewCube="False" IsRotationEnabled="False" IsZoomEnabled="False">
+                <helix:DefaultLights/>
+            </helix:HelixViewport3D>
+        </Grid>
+    </Grid>
+</Window>

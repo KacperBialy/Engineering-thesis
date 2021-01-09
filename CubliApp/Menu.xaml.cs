@@ -10,15 +10,18 @@ namespace CubliApp
     public partial class Menu : Window
     {
         int maximized = 0;
-        Window window = new PortConfiguration();
+        Window windowPort = new PortConfiguration();
+        Window windowCubeControll = new CubeControll();
         private const string MODEL_PATH = "cube.obj";
         private Plots plot;
+        private bool JustChecked;
         private bool[] AxisEnables = new bool[8];
         static System.Timers.Timer _timer = new System.Timers.Timer();
 
         public Menu()
         {
-            window.Visibility = Visibility.Hidden;
+            windowPort.Visibility = Visibility.Hidden;
+            windowCubeControll.Visibility = Visibility.Hidden;
 
             InitializeComponent();
 
@@ -33,7 +36,7 @@ namespace CubliApp
         }
         private void UpdateClock(object sender, EventArgs e)
         {
-            window.Dispatcher.BeginInvoke(new Action(() =>
+            windowPort.Dispatcher.BeginInvoke(new Action(() =>
             {
                 lbl_Time.Content = DateTime.Now.ToShortTimeString();
 
@@ -66,51 +69,21 @@ namespace CubliApp
 
         private void btn_PortConfig_Click(object sender, RoutedEventArgs e)
         {
-            window.Visibility = Visibility.Visible;
+            windowPort.Visibility = Visibility.Visible;
         }
 
         private void btn_Plot_Click(object sender, RoutedEventArgs e)
         {
-            grid_Controll.Visibility = Visibility.Collapsed;
-            grid_Controll2.Visibility = Visibility.Collapsed;
             grid_plots.Visibility = Visibility.Visible;
 
         }
 
         private void btn_controlCube_Click(object sender, RoutedEventArgs e)
         {
-            grid_plots.Visibility = Visibility.Collapsed;
-            grid_Controll.Visibility = Visibility.Visible;
-            grid_Controll2.Visibility = Visibility.Visible;
-
-            ViewModel3d.CreateModel(ref viewPort3d);
+            windowCubeControll.Visibility = Visibility.Visible;
         }
 
-        private void btn_Rotate(object sender, RoutedEventArgs e)
-        {
-            Button button = (Button)sender;
-
-            if (button.Name == "btn_up")
-                ViewModel3d.Rotate("x", '+', 45);
-
-            else if (button.Name == "btn_upJump")
-                ViewModel3d.Rotate("x", '+', 90);
-
-            else if (button.Name == "btn_left")
-                ViewModel3d.Rotate("y", '-', 45);
-
-            else if (button.Name == "btn_leftJump")
-                ViewModel3d.Rotate("y", '-', 90);
-
-
-        }
-
-        private void btn_ResetView_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel3d.Reset();
-        }
-
-        private bool JustChecked;
+        
         private void RadioButton_CheckedPlots(object sender, RoutedEventArgs e)
         {
             RadioButton s = (RadioButton)sender;

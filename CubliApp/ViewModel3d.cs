@@ -1,5 +1,6 @@
 ﻿using HelixToolkit.Wpf;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -30,7 +31,7 @@ namespace CubliApp
                     viewPort3d.Camera.LookDirection = new Vector3D(14.32, -15.95, -7.48);
                     viewPort3d.Camera.UpDirection = new Vector3D(-0.354, 0.392, 0.834);
                     viewPort3d.Camera.Position = new Point3D(-16.52, 16.62, 9);
-                    viewPort3d.CameraController.CameraTarget = new Point3D(-2.2, 0.6, 1.5);
+                    //viewPort3d.CameraController.CameraTarget = new Point3D(-2.2, 0.6, 1.5);
                     viewPort3d.Children.Add(device3D);
                 }
                 else
@@ -82,23 +83,11 @@ namespace CubliApp
                     matrix.Rotate(new Quaternion(new Vector3D(0, -1, 0), angle));
                     device3D.Transform = new MatrixTransform3D(matrix);
                 }
-                else if (axis == "z")
-                {
-                    var matrix = device3D.Transform.Value;
-                    matrix.Rotate(new Quaternion(new Vector3D(0, 0, 1), angle));
-                    device3D.Transform = new MatrixTransform3D(matrix);
-                }
-                else if (axis == "xy")
-                {
-                    var matrix = device3D.Transform.Value;
-                    matrix.Rotate(new Quaternion(new Vector3D(1, 1, 0), angle));
-                    device3D.Transform = new MatrixTransform3D(matrix);
-                }
             }
         }
         public static void Reset()
         {
-                    device3D.Transform = new MatrixTransform3D(StartPosition);
+            device3D.Transform = new MatrixTransform3D(StartPosition);
         }
     }
 }

@@ -197,12 +197,11 @@ namespace CubliApp
         }
         private PlotModel SetUpLegend(PlotModel plotModel)
         {
-            plotModel.LegendOrientation = OxyPlot.LegendOrientation.Horizontal;
-            //Orientacja pozioma
-            plotModel.LegendPlacement = OxyPlot.LegendPlacement.Outside; //Poza planszą wykresu
-            plotModel.LegendPosition = OxyPlot.LegendPosition.TopCenter; //Pozycja: góra, prawo
-            plotModel.LegendBackground = OxyPlot.OxyColor.FromAColor(200, OxyPlot.OxyColors.White);//Tło białe
-            plotModel.LegendBorder = OxyPlot.OxyColors.Black; //Ramka okna czarna
+            plotModel.LegendOrientation = LegendOrientation.Horizontal;
+            plotModel.LegendPlacement = LegendPlacement.Outside;
+            plotModel.LegendPosition = LegendPosition.TopCenter;
+            plotModel.LegendBackground = OxyColor.FromAColor(200, OxyColors.White);
+            plotModel.LegendBorder = OxyColors.Black;
 
             return plotModel;
         }
