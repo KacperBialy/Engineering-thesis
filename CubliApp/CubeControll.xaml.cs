@@ -46,5 +46,9 @@ namespace CubliApp
             ViewModel3d.Reset();
         }
 
+        private void btn_start_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel3d.Start();
+        }
     }
 }

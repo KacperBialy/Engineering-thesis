@@ -67,27 +67,43 @@ namespace CubliApp
 
         public static void Rotate(string axis, char direction, int angle)
         {
-            if (device3D != null)
-            {
-                angle = direction == '+' ? angle : -angle;
 
-                if (axis == "x")
+            if (PortConfiguration.bluetooth.IsPortOpen)
+            {
+                if (device3D != null)
                 {
-                    var matrix = device3D.Transform.Value;
-                    matrix.Rotate(new Quaternion(new Vector3D(1, 0, 0), angle));
-                    device3D.Transform = new MatrixTransform3D(matrix);
+                    angle = direction == '+' ? angle : -angle;
+
+                    if (axis == "x")
+                    {
+                        var matrix = device3D.Transform.Value;
+                        matrix.Rotate(new Quaternion(new Vector3D(1, 0, 0), angle));
+                        device3D.Transform = new MatrixTransform3D(matrix);
+                    }
+                    else if (axis == "y")
+                    {
+                        var matrix = device3D.Transform.Value;
+                        matrix.Rotate(new Quaternion(new Vector3D(0, -1, 0), angle));
+                        device3D.Transform = new MatrixTransform3D(matrix);
+                    }
                 }
-                else if (axis == "y")
-                {
-                    var matrix = device3D.Transform.Value;
-                    matrix.Rotate(new Quaternion(new Vector3D(0, -1, 0), angle));
-                    device3D.Transform = new MatrixTransform3D(matrix);
-                }
+                PortConfiguration.bluetooth.SendData("3");
+            }
+            else
+            {
+                MessageBox.Show("Open port first!");
             }
         }
         public static void Reset()
         {
             device3D.Transform = new MatrixTransform3D(StartPosition);
+        }
+        public static void Start()
+        {
+            if (PortConfiguration.bluetooth.IsPortOpen)
+            {
+                PortConfiguration.bluetooth.SendData("2");
+            }
         }
     }
 }

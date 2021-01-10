@@ -43,6 +43,12 @@
                     <materialDesign:PackIcon Kind="ArrowTop" Background="Transparent" Foreground="#FF225C75" />
                 </Viewbox>
             </Button>
+            
+            <Button x:Name="btn_start" Grid.Row="2" Grid.Column="2" Margin="1" Background="White" Click="btn_Rotate">
+                <Viewbox>
+                    <materialDesign:PackIcon Kind="play" Background="Transparent" Foreground="#FF225C75" />
+                </Viewbox>
+            </Button>
 
 
             <Button x:Name="btn_ResetView" Grid.Column="3" Grid.Row="3" Margin="1" Background="White" Click="btn_ResetView_Click" >

@@ -10,12 +10,12 @@ namespace CubliApp
     public partial class PortConfiguration : Window
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-        Bluetooth bluetooth = new Bluetooth();
+        public static Bluetooth bluetooth = new Bluetooth();
         public PortConfiguration()
         {
             Logger.Info($"App start");
             InitializeComponent();
-            ReScanPorts();
+            ReScanPorts(); 
         }
         private void ReScanPorts()
         {

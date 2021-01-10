@@ -2,11 +2,10 @@
 using System.Text;
 using System.Threading;
 using System.Windows;
-using System.Windows.Threading;
 
 namespace CubliApp
 {
-    class Bluetooth
+    public class Bluetooth
     {
         Ports port;
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
@@ -14,7 +13,7 @@ namespace CubliApp
         public StringBuilder dataSend { get; set; }
         public StringBuilder dataToPlot { get; set; }
         private Thread readThread { get; set; }
-        private bool IsPortOpen { get; set; }
+        public bool IsPortOpen { get; set; }
         private static bool statusOfPlot { get; set; }
         public Bluetooth()
         {
@@ -25,7 +24,6 @@ namespace CubliApp
         }
         private bool Configuration()
         {
-
             bool isConfigurationOK = port.CreatePort();
             return isConfigurationOK;
 
@@ -116,6 +114,14 @@ namespace CubliApp
                 {
                     window.txtBox_sendMessages.Text = dataSend.ToString();
                 }));
+            }
+        }
+        public void SendData(string data)
+        {
+            if (IsPortOpen)
+            {
+                port.serialPort.Write(data);
+                dataSend.Append($"{data}\n");
             }
         }
         public void Read(PortConfiguration window)
