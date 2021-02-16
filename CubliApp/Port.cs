@@ -1,43 +1,40 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO.Ports;
 using System.Windows;
-using System.Diagnostics;
 namespace CubliApp
 {
-    class Ports
+    class Port
     {
-        public SerialPort serialPort;
-        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        public SerialPort serialPort { get; set; }
         private int BoudRate { get; set; }
         private int DataBits { get; set; }
-        private string Parity { get; set; }
-        private string StopBits { get; set; }
+        private Parity _Parity { get; set; }
+        private StopBits _StopBits { get; set; }
         private string PortName { get; set; }
+
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public bool CreatePort()
         {
             bool isPortOK = false;
 
-
             if (PortName != null)
             {
-                Parity Parity_ = (Parity)Enum.Parse(typeof(Parity), Parity, true);
-                StopBits StopBits_ = (StopBits)Enum.Parse(typeof(StopBits), StopBits, true);
                 int readTimeOut = 10000;
                 int writeTimeOut = 10000;
-                logger.Info($"Port Configuration:\nPortName: {PortName}\nBaudRate: {BoudRate}\nParity{Parity_.ToString()}\nDataBits: {DataBits}\nStopBits: {StopBits_.ToString()}\nReadTimeout: {readTimeOut}\nWriteTimeOut: {writeTimeOut}");
+
+                logger.Info($"Port Configuration:\nPortName: {PortName}\nBaudRate: {BoudRate}\nParity{_Parity}\nDataBits: {DataBits}\nStopBits: {_StopBits}\nReadTimeout: {readTimeOut}\nWriteTimeOut: {writeTimeOut}");
 
                 serialPort = new SerialPort();
 
                 serialPort.PortName = PortName;
                 serialPort.BaudRate = BoudRate;
-                serialPort.Parity = Parity_;
+                serialPort.Parity = _Parity;
                 serialPort.DataBits = DataBits;
-                serialPort.StopBits = StopBits_;
+                serialPort.StopBits = _StopBits;
                 serialPort.ReadTimeout = readTimeOut;
                 serialPort.WriteTimeout = writeTimeOut;
-                serialPort.Handshake = Handshake.None;
-
 
                 isPortOK = true;
                 return isPortOK;
@@ -55,15 +52,15 @@ namespace CubliApp
             else if (group == "DataBits")
                 DataBits = int.Parse(value);
             else if (group == "Parity")
-                Parity = value;
+                _Parity = (Parity)Enum.Parse(typeof(Parity), value, true);
             else if (group == "StopBits")
             {
-                if (value == "1,5")
-                {
-                    StopBits = "3"; // 1 -> ONE 2 -> TWO 3 -> ONE POINT FIVE (ENUM StopBits)
-                }
-                else
-                    StopBits = value;
+                if (value == "1")
+                    _StopBits = StopBits.One;
+                else if (value == "1.5")
+                    _StopBits = StopBits.OnePointFive;
+                else if (value == "2")
+                    _StopBits = StopBits.Two;
             }
             else if (group == "Port")
                 PortName = value;
@@ -76,14 +73,18 @@ namespace CubliApp
         public bool TestConnection()
         {
             ClearBuffers();
-            serialPort.Write("1"); // 1->CONNECTION COMMAND
+            serialPort.Write("1"); // 1 -> CONNECTION COMMAND
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
+            TimeSpan ts;
+            float time;
+            string frame;
             while (true)
             {
-                TimeSpan ts = stopWatch.Elapsed;
-                float time = ts.Seconds;
-                string frame = serialPort.ReadTo("#");
+                ts = stopWatch.Elapsed;
+                ts.
+                time = ts.Seconds;
+                frame = serialPort.ReadTo("#");
                 logger.Debug($"Connection frame: {frame}");
                 if (frame.Contains("OK"))
                 {
@@ -97,7 +98,7 @@ namespace CubliApp
         public bool TestDisconnect()
         {
             ClearBuffers();
-            serialPort.Write("0"); // 0->DISCONNECTION COMMAND
+            serialPort.Write("0"); // 0 -> DISCONNECTION COMMAND
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
             while (true)

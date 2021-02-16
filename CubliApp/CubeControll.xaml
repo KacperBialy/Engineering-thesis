@@ -44,7 +44,7 @@
                 </Viewbox>
             </Button>
             
-            <Button x:Name="btn_start" Grid.Row="2" Grid.Column="2" Margin="1" Background="White" Click="btn_Rotate">
+            <Button x:Name="btn_start" Grid.Row="2" Grid.Column="2" Margin="1" Background="White" Click="btn_start_Click">
                 <Viewbox>
                     <materialDesign:PackIcon Kind="play" Background="Transparent" Foreground="#FF225C75" />
                 </Viewbox>

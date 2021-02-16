@@ -64,7 +64,7 @@ namespace CubliApp
                     if (data_received.Length > 0)
                     {
                         string[] data = data_received.ToString().Split('\n');
-                        data_received = new StringBuilder();
+
                         List<List<List<float>>> group_data = GroupData(data);
 
                         for (int i = 0; i < group_data.Count; i++)
@@ -90,6 +90,7 @@ namespace CubliApp
                         }
                     }
                 }
+                data_received = new StringBuilder();
                 Bluetooth.SetStatusOfPlot(true);
             }
         }

@@ -7,7 +7,7 @@ namespace CubliApp
 {
     public class Bluetooth
     {
-        Ports port;
+        private readonly Port port;
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         public StringBuilder dataReceived { get; set; }
         public StringBuilder dataSend { get; set; }
@@ -20,21 +20,15 @@ namespace CubliApp
             dataReceived = new StringBuilder();
             dataToPlot = new StringBuilder();
             dataSend = new StringBuilder();
-            port = new Ports();
-        }
-        private bool Configuration()
-        {
-            bool isConfigurationOK = port.CreatePort();
-            return isConfigurationOK;
-
+            port = new Port();
         }
         public void UpdateConfiguration(string group, string value)
         {
             port.Update(group, value);
         }
-        public bool Connect(PortConfiguration window, Bluetooth bluetooth)
+        public bool Connect(PortConfiguration window)
         {
-            bool isConfigurationOK = Configuration();
+            bool isConfigurationOK = port.CreatePort();
 
             if (isConfigurationOK == true)
             {
@@ -43,9 +37,9 @@ namespace CubliApp
                     port.serialPort.Open();
                     logger.Info("Port Open");
 
-                    IsPortOpen = ConnectionTest(window);
-                    if (IsPortOpen == true)
+                    if (port.TestConnection() == true)
                     {
+                        IsPortOpen = true;
                         dataReceived.Append("Start of transmission\n");
 
                         window.Dispatcher.BeginInvoke(new Action(() =>
@@ -54,14 +48,16 @@ namespace CubliApp
                         }));
 
                         logger.Info("Connected");
-                        readThread = new Thread(() => bluetooth.Read(window));
+                        readThread = new Thread(() => Read());
                         readThread.Start();
                     }
                 }
-                catch
+                catch(Exception exception)
                 {
                     IsPortOpen = false;
+                    port.serialPort.Close();
                     logger.Error("Problem with connection!");
+                    logger.Error(exception.Message);
                     MessageBox.Show("You have chosen the wrong port", "Port problem", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
@@ -97,13 +93,6 @@ namespace CubliApp
                 return isDisconnectOK;
             }
         }
-        bool ConnectionTest(PortConfiguration window)
-        {
-            if (port.TestConnection())
-                return true;
-            else
-                return false;
-        }
         public void SendData(string data, PortConfiguration window)
         {
             if (IsPortOpen)
@@ -124,7 +113,7 @@ namespace CubliApp
                 dataSend.Append($"{data}\n");
             }
         }
-        public void Read(PortConfiguration window)
+        public void Read()
         {
             while (IsPortOpen)
             {

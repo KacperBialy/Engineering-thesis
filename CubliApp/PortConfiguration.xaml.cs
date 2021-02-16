@@ -47,7 +47,7 @@ namespace CubliApp
 
         private void btn_Connect_Click(object sender, RoutedEventArgs e)
         {
-            bool isConnection = bluetooth.Connect(this, bluetooth);
+            bool isConnection = bluetooth.Connect(this);
             if (isConnection == true)
             {
                 btn_Disconnect.IsEnabled = true;
